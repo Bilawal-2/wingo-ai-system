@@ -2,3 +2,4 @@ pymongo
 scikit-learn
 joblib
 pandas
+python-dotenv

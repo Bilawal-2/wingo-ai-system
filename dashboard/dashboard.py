@@ -1,10 +1,16 @@
+import os
 import streamlit as st
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 st.title("Wingo AI Predictor")
 
 try:
-    res = requests.get("http://api:5000/predict", timeout=5)
+    api_url = os.getenv("DASHBOARD_API_URL", "http://api:5000")
+    timeout = int(os.getenv("DASHBOARD_TIMEOUT", 5))
+    res = requests.get(f"{api_url}/predict", timeout=timeout)
 
     if res.status_code == 200:
         data = res.json()

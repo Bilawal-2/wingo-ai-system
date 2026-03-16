@@ -1,18 +1,26 @@
+import os
 import time
 import pandas as pd
 from pymongo import MongoClient
 from sklearn.ensemble import RandomForestClassifier
 import joblib
+from dotenv import load_dotenv
 
-client = MongoClient("mongodb://mongodb:27017/")
-db = client.wingo
+load_dotenv()
+
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://mongodb:27017/")
+MONGODB_DB = os.getenv("MONGODB_DB", "wingo")
+client = MongoClient(MONGODB_URI)
+db = client[MONGODB_DB]
 
 while True:
-
-    data = list(db.results.find())
+    collection_name = os.getenv("MONGODB_COLLECTION", "results")
+    collection = db[collection_name]
+    data = list(collection.find())
 
     # wait until we have enough rows
-    if len(data) < 30:
+    min_samples = int(os.getenv("MIN_TRAINING_SAMPLES", 30))
+    if len(data) < min_samples:
         print("Waiting for enough data...")
         time.sleep(30)
         continue
@@ -29,7 +37,8 @@ while True:
 
     df = df.dropna()
 
-    if len(df) < 10:
+    min_data_shift = int(os.getenv("MIN_DATA_AFTER_SHIFT", 10))
+    if len(df) < min_data_shift:
         print("Not enough training samples after shift...")
         time.sleep(30)
         continue
@@ -41,8 +50,10 @@ while True:
 
     model.fit(X,y)
 
-    joblib.dump(model, "models/model.pkl")
+    model_path = os.getenv("MODEL_PATH", "models/model.pkl")
+    joblib.dump(model, model_path)
 
     print("Model trained successfully")
 
-    time.sleep(120)
+    sleep_interval = int(os.getenv("TRAINER_SLEEP_INTERVAL", 120))
+    time.sleep(sleep_interval)

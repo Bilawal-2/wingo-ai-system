@@ -1,7 +1,5 @@
 flask
 pymongo
-pandas
-scikit-learn
-streamlit
 joblib
-requests
+scikit-learn
+python-dotenv
