@@ -1,0 +1,40 @@
+services:
+
+  mongodb:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  scraper:
+    build: ./scraper
+    depends_on:
+      - mongodb
+
+  trainer:
+    build: ./trainer
+    depends_on:
+      - mongodb
+    volumes:
+      - ./models:/app/models
+
+  api:
+    build: ./api
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+      - trainer
+    volumes:
+      - ./models:/app/models
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+
+volumes:
+  mongo_data:

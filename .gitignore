@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+
+models/*.pkl
+mongodb_data/
+
+.vscode/
+.idea/
