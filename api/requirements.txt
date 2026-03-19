@@ -1,5 +1,10 @@
 flask
 pymongo
-joblib
+pandas
 scikit-learn
+streamlit
+joblib
+requests
+tensorflow
+numpy
 python-dotenv

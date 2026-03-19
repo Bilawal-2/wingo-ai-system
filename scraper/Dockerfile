@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["python","scraper.py"]
+CMD ["python", "scraper_new.py"]

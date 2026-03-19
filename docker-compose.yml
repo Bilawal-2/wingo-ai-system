@@ -8,35 +8,38 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    restart: always
 
   scraper:
     build: ./scraper
     depends_on:
       - mongodb
-
+    restart: always
   trainer:
     build: ./trainer
     depends_on:
       - mongodb
     volumes:
       - ./models:/app/models
+    restart: always
 
   api:
     build: ./api
-    ports:
-      - "5000:5000"
+    expose:
+      - "5000"
     depends_on:
       - mongodb
       - trainer
     volumes:
       - ./models:/app/models
-
+    restart: always
   dashboard:
     build: ./dashboard
-    ports:
-      - "8501:8501"
+    expose:
+      - "8501"
     depends_on:
       - api
+    restart: always
 
 volumes:
   mongo_data:
