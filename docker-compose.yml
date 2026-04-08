@@ -7,8 +7,15 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - /mnt/backup/docker-volumes/wingo-mongodb:/data/db
+    command: mongod --bind_ip 0.0.0.0
     restart: always
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 2s
+      retries: 5
+      start_period: 10s
 
   scraper:
     build: ./scraper
@@ -25,8 +32,8 @@ services:
 
   api:
     build: ./api
-    expose:
-      - "5000"
+    ports:
+      - "5000:5000"
     depends_on:
       - mongodb
       - trainer
@@ -35,11 +42,8 @@ services:
     restart: always
   dashboard:
     build: ./dashboard
-    expose:
-      - "8501"
+    ports:
+      - "8501:8501"
     depends_on:
       - api
     restart: always
-
-volumes:
-  mongo_data:
